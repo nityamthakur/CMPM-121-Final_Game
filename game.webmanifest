@@ -1,0 +1,19 @@
+{
+    "name": "My Cool Offline Mobile Game",
+    "short_name": "MyCoolGame",
+    "description": "This is a progressive web app for an offline farming simulation game.",
+    "start_url": "/index.html",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "https://cdn.glitch.global/4fc6eda5-1313-4a1e-8b76-b859653416cd/brace-logo-symbol.png?v=1733533998031",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "https://cdn.glitch.global/4fc6eda5-1313-4a1e-8b76-b859653416cd/brace-logo-symbol.png?v=1733533998031",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
