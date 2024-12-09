@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="game.webmanifest">
     <title>Plant Farming Game</title>
 </head>
 <body>
@@ -19,5 +20,15 @@
     <script src="src/scenes/UIScene.js"></script>
     <script src="src/scenes/GameOverScene.js"></script>
     <script src="src/main.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(() => {
+                console.log('Service Worker registered successfully.');
+            }).catch((error) => {
+                console.error('Service Worker registration failed:', error);
+            });
+        }
+    </script>
 </body>
 </html>
