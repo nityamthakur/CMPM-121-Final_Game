@@ -3,60 +3,68 @@ class MainMenuScene extends Phaser.Scene {
         super('MainMenuScene');
     }
 
-    create() {
-        // Background
-        this.add.image(400, 300, 'background');
+    preload() {
+        // Set the path for all assets
+        this.load.setPath('./assets/');
 
-        // Title
-        this.title = this.add.text(400, 100, 'Balloon Pop', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        // Load images for the game
+        this.load.image('cabbage_1', 'cabbage_1.png');
+        this.load.image('cabbage_2', 'cabbage_2.png');
+        this.load.image('cabbage_3', 'cabbage_3.png');
+        this.load.image('carrot_1', 'carrot_1.png');
+        this.load.image('carrot_2', 'carrot_2.png');
+        this.load.image('carrot_3', 'carrot_3.png');
+        this.load.image('corn_1', 'corn_1.png');
+        this.load.image('corn_2', 'corn_2.png');
+        this.load.image('corn_3', 'corn_3.png');
+        this.load.image('character', 'Character.png');
+        this.load.image('grass', 'grass.png');
 
-        // Menu Options
-        this.playText = this.add.text(400, 200, 'Play', { fontSize: '24px', fill: '#fff' })
-            .setInteractive()
-            .on('pointerdown', () => this.startGame());
-
-        this.highScoreText = this.add.text(400, 250, 'High Score', { fontSize: '24px', fill: '#fff' })
-            .setInteractive()
-            .on('pointerdown', () => this.showHighScore());
-
-        this.helpText = this.add.text(400, 300, 'Help', { fontSize: '24px', fill: '#fff' })
-            .setInteractive()
-            .on('pointerdown', () => this.toggleHelp());
-
-        // Align Text
-        [this.playText, this.highScoreText, this.helpText].forEach(text => {
-            text.setOrigin(0.5);
+        // Display loading progress
+        const loadingText = this.add.text(20, 20, 'Loading...', { fontSize: '20px', fill: '#FFFFFF' });
+        this.load.on('progress', (progress) => {
+            loadingText.setText(`Loading: ${Math.round(progress * 100)}%`);
         });
+    }
 
-        // High Score Display Text
-        this.highScoreDisplay = this.add.text(400, 350, '', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
-        this.highScoreDisplay.visible = false;
+    create() {
+        // Display background
+        this.add.image(400, 300, 'grass');
 
-        // Help information text
-        this.helpInfoText = this.add.text(400, 400, '', { fontSize: '20px', fill: '#fff', align: 'center' })
+        // Display title
+        this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+
+        // Add "Start Game" button
+        const startButton = this.add.text(400, 200, 'Start Game', { fontSize: '24px', fill: '#fff' })
+            .setInteractive()
             .setOrigin(0.5);
-        this.helpInfoText.visible = false;
+        startButton.on('pointerdown', () => this.scene.start('GameScene'));
+
+        // Add "Instructions" button
+        const instructionsButton = this.add.text(400, 250, 'Instructions', { fontSize: '24px', fill: '#fff' })
+            .setInteractive()
+            .setOrigin(0.5);
+        instructionsButton.on('pointerdown', () => this.showInstructions());
+
+        // Hidden text for instructions
+        this.instructionText = this.add.text(400, 400, '', { fontSize: '20px', fill: '#fff', align: 'center' })
+            .setOrigin(0.5);
+        this.instructionText.visible = false;
     }
 
-    startGame() {
-        // Start the GameScene
-        this.scene.start('GameScene');
-    }
-
-    toggleHelp() {
-        // Toggle the visibility of help information
-        this.helpInfoText.visible = !this.helpInfoText.visible;
-        if (this.helpInfoText.visible) {
-            this.helpInfoText.setText("Controls:\n- Left Arrow: Move Left\n- Right Arrow: Move Right\n- Spacebar: Shoot\n\nPower-ups:\n- Rapid Fire: Allows faster shooting for a limited time.\n\nAvoid the balloons and try to pop them!");
+    showInstructions() {
+        this.instructionText.visible = !this.instructionText.visible;
+        if (this.instructionText.visible) {
+            this.instructionText.setText(
+                'Instructions:\n' +
+                '- Use arrow keys to move.\n' +
+                '- Reap and sow plants near you.\n' +
+                '- Manage sun and water to grow crops.\n' +
+                '- Reach the win condition to complete the level.'
+            );
         } else {
-            this.helpInfoText.setText('');
+            this.instructionText.setText('');
         }
     }
-
-    showHighScore() {
-        // Retrieve high score from local storage and display it
-        const highScore = localStorage.getItem('highScore') || '0';
-        this.highScoreDisplay.setText(`High Score: ${highScore}`);
-        this.highScoreDisplay.visible = true;
-    }
 }
+
