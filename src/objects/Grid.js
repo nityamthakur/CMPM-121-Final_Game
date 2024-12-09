@@ -61,34 +61,54 @@ class Grid {
         this.grid[index + 3] = growthStage;
     }
 
+    // Serialize the grid into a plain object for saving
+    serialize() {
+        return {
+            grid: Array.from(this.grid),
+            width: this.width,
+            height: this.height,
+        };
+    }
+
+    // Deserialize a saved grid into the current grid object
+    deserialize(data) {
+        if (data && data.grid && data.width && data.height) {
+            this.grid = Uint8Array.from(data.grid);
+            this.width = data.width;
+            this.height = data.height;
+            console.log('Grid state restored from save.');
+        } else {
+            console.error('Invalid grid data provided for deserialization.');
+        }
+    }
+
     // Render the grid on the game scene (optional for visualization)
     render() {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                const index = this.getIndex(x, y);
-                const sun = this.grid[index];
-                const water = this.grid[index + 1];
+                const { sun, water } = this.getCellData(x, y);
 
                 // Draw grid background (grass texture or rectangle)
                 this.scene.add.image(
                     x * this.cellSize + this.cellSize / 2,
                     y * this.cellSize + this.cellSize / 2,
                     'grass'
-                ).setScale(this.cellSize / 64); // Adjust scale to fit the grid
+                ).setScale(this.cellSize / 100);
 
                 // Display sun and water levels as text
                 this.scene.add.text(
-                    x * this.cellSize + this.cellSize / 4,
-                    y * this.cellSize + this.cellSize / 4,
+                    x * this.cellSize + 5,
+                    y * this.cellSize + 5,
                     `S:${sun}\nW:${water}`,
                     {
-                        fontSize: `${this.cellSize / 10}px`, // Adjust font size relative to cell size
+                        fontSize: '12px',
                         fill: '#fff',
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
                         padding: { left: 2, right: 2, top: 2, bottom: 2 }
                     }
-                ).setOrigin(0.5);
+                );
             }
         }
     }
 }
+
