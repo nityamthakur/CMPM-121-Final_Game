@@ -1,0 +1,32 @@
+{
+    "en": {
+      "start_game": "Start Game",
+      "load_game": "Load Game",
+      "instructions": "Instructions",
+      "win_message": "You Win!",
+      "lose_message": "You Lose!",
+      "currency": "Currency",
+      "produce_weight": "Produce Weight",
+      "turn_count": "Turn Count"
+    },
+    "zh": {
+      "start_game": "开始游戏",
+      "load_game": "加载游戏",
+      "instructions": "说明",
+      "win_message": "你赢了！",
+      "lose_message": "你输了！",
+      "currency": "货币",
+      "produce_weight": "农产品重量",
+      "turn_count": "回合数"
+    },
+    "ar": {
+      "start_game": "ابدأ اللعبة",
+      "load_game": "تحميل اللعبة",
+      "instructions": "تعليمات",
+      "win_message": "لقد فزت!",
+      "lose_message": "لقد خسرت!",
+      "currency": "العملة",
+      "produce_weight": "وزن المحصول",
+      "turn_count": "عدد الأدوار"
+    }
+  }
