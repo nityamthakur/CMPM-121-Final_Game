@@ -145,7 +145,8 @@ class UIScene extends Phaser.Scene {
                 '- Sow plants using the buttons.\n' +
                 '- Reap plants when fully grown.\n' +
                 '- Manage resources (sun/water).\n' +
-                '- Reach $50 to win!'
+                '- Reaping earns both produce and currency.\n' +
+                '- Reach 50g of produce to win!'
             );
         } else {
             this.instructionText.setText('');
