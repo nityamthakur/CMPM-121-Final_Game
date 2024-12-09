@@ -7,60 +7,53 @@ class MainMenuScene extends Phaser.Scene {
         // Set the path for all assets
         this.load.setPath('./assets/');
 
-        // List of plant types and their growth stages
-        const plantTypes = ['cabbage', 'carrot', 'corn'];
-        const growthStages = [1, 2, 3];
-
-        // Load plant images dynamically
-        plantTypes.forEach((type) => {
-            growthStages.forEach((stage) => {
-                this.load.image(`${type}_${stage}`, `${type}_${stage}.png`);
-            });
-        });
-
-        // Load other game assets
+        // Load assets
+        this.load.image('cabbage_1', 'cabbage_1.png');
+        this.load.image('carrot_1', 'carrot_1.png');
+        this.load.image('corn_1', 'corn_1.png');
         this.load.image('character', 'Character.png');
         this.load.image('grass', 'grass.png');
-
-        // Display loading progress
-        const loadingText = this.add.text(20, 20, 'Loading...', { fontSize: '20px', fill: '#FFFFFF' });
-        this.load.on('progress', (progress) => {
-            loadingText.setText(`Loading: ${Math.round(progress * 100)}%`);
-        });
     }
 
     create() {
-        // Display title
+        // Add background
+        this.add.rectangle(400, 300, 800, 600, 0x87CEEB);
+
+        // Add game title
         this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
 
         // Add "Start Game" button
-        const startButton = this.add.text(400, 200, 'Start Game', { fontSize: '24px', fill: '#fff' })
+        const startButton = this.add.text(400, 200, 'Start Game', { fontSize: '24px', fill: '#fff', backgroundColor: '#000' })
             .setInteractive()
             .setOrigin(0.5);
-        startButton.on('pointerdown', () => this.scene.start('GameScene'));
+        startButton.on('pointerdown', () => {
+            this.scene.start('GameScene');
+            this.scene.stop('MainMenuScene');
+        });
 
         // Add "Instructions" button
-        const instructionsButton = this.add.text(400, 250, 'Instructions', { fontSize: '24px', fill: '#fff' })
+        const instructionsButton = this.add.text(400, 250, 'Instructions', { fontSize: '24px', fill: '#fff', backgroundColor: '#000' })
             .setInteractive()
             .setOrigin(0.5);
-        instructionsButton.on('pointerdown', () => this.showInstructions());
+        instructionsButton.on('pointerdown', () => this.toggleInstructions());
 
-        // Hidden text for instructions
-        this.instructionText = this.add.text(400, 400, '', { fontSize: '20px', fill: '#fff', align: 'center' })
+        // Hidden instructions text
+        this.instructionText = this.add.text(400, 400, '', { fontSize: '18px', fill: '#fff', align: 'center', wordWrap: { width: 600 } })
             .setOrigin(0.5);
         this.instructionText.visible = false;
     }
 
-    showInstructions() {
+    toggleInstructions() {
         this.instructionText.visible = !this.instructionText.visible;
+
         if (this.instructionText.visible) {
             this.instructionText.setText(
                 'Instructions:\n' +
                 '- Use arrow keys to move.\n' +
-                '- Reap and sow plants near you.\n' +
-                '- Manage sun and water to grow crops.\n' +
-                '- Each plant has different costs and growth times.\n' +
-                '- Reach the goal to complete the level!'
+                '- Press SPACE to advance turns.\n' +
+                '- Sow plants by clicking the buttons.\n' +
+                '- Reap fully grown plants to earn produce.\n' +
+                '- Reach 50g of produce to win!'
             );
         } else {
             this.instructionText.setText('');
@@ -68,4 +61,3 @@ class MainMenuScene extends Phaser.Scene {
     }
 }
 
-//export default MainMenuScene;

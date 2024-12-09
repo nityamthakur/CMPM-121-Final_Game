@@ -74,22 +74,21 @@ class Grid {
                     x * this.cellSize + this.cellSize / 2,
                     y * this.cellSize + this.cellSize / 2,
                     'grass'
-                ).setScale(this.cellSize / 100);
+                ).setScale(this.cellSize / 64); // Adjust scale to fit the grid
 
                 // Display sun and water levels as text
                 this.scene.add.text(
-                    x * this.cellSize + 5,
-                    y * this.cellSize + 5,
+                    x * this.cellSize + this.cellSize / 4,
+                    y * this.cellSize + this.cellSize / 4,
                     `S:${sun}\nW:${water}`,
                     {
-                        fontSize: '12px',
+                        fontSize: `${this.cellSize / 10}px`, // Adjust font size relative to cell size
                         fill: '#fff',
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
                         padding: { left: 2, right: 2, top: 2, bottom: 2 }
                     }
-                );
+                ).setOrigin(0.5);
             }
         }
     }
 }
-
