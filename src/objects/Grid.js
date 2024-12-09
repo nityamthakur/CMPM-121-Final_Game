@@ -85,18 +85,21 @@ class Grid {
     }
 
     addInitialPlants(initialPlants) {
-        initialPlants.forEach(({ x, y, type }) => {
+        initialPlants.forEach(({ x, y, type, growth }) => {
             const index = this.getIndex(x, y);
 
-            // Set plant type and reset growth stage
+            // Set plant type and growth stage
             this.grid[index + 2] = type; // Plant type (numeric ID)
-            this.grid[index + 3] = 1; // Initial growth stage
+            this.grid[index + 3] = growth; // Initial growth stage
 
             // Add the plant visually on the grid
-            const plant = new Plant(this.scene, x, y, type);
-            plant.growth = 1; // Ensure growth stage is consistent
+            const plantDefinition = this.scene.plantManager.getPlantDefinition(type);
+            const plant = new Plant(this.scene, x, y, type, plantDefinition);
+            plant.growth = growth; // Ensure growth stage is consistent
+            plant.updateSprite();
             this.scene.plants.push(plant);
-            console.log(`Placed initial plant: ${type} at (${x}, ${y})`);
+
+            console.log(`Placed initial plant: ${type} at (${x}, ${y}) with growth stage ${growth}.`);
         });
     }
 
@@ -113,6 +116,7 @@ class Grid {
             this.grid = Uint8Array.from(data.grid);
             this.width = data.width;
             this.height = data.height;
+
             console.log('Grid state restored from save.');
 
             // Update text display after deserialization
@@ -141,6 +145,7 @@ class Grid {
         this.tiles = [];
         this.sunAndWaterText = [];
         this.createGrid();
+
         console.log(`Grid resized to ${newWidth}x${newHeight}.`);
     }
 }

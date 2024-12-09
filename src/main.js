@@ -26,7 +26,7 @@ let config = {
 // Initialize the Phaser game instance
 const game = new Phaser.Game(config);
 
-// Check for auto-save and prompt the player
+// Check for auto-save and prompt the player or allow scenario selection
 window.onload = () => {
     const saveSystem = new SaveSystem();
     const autoSaveState = saveSystem.loadAuto();
@@ -36,6 +36,12 @@ window.onload = () => {
         if (resume) {
             // Start the game with the auto-save state
             game.scene.start('GameScene', { savedState: autoSaveState });
+        } else {
+            // Go to main menu for scenario selection
+            game.scene.start('MainMenuScene');
         }
+    } else {
+        // No auto-save found, go to main menu
+        game.scene.start('MainMenuScene');
     }
 };

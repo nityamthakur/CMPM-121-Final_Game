@@ -17,7 +17,7 @@ class GameScene extends Phaser.Scene {
         this.grid = new Grid(this, 5, 5, cellSize);
 
         // Player setup
-        this.player = new Character(this, 0, 0, 'character', 0.1);
+        this.player = new Character(this, 0, 0, 'character', 0.5);
 
         // Default Currency and Produce (overridden by scenario)
         this.currency = 20;
@@ -261,4 +261,3 @@ class GameScene extends Phaser.Scene {
         if (this.cursors.down.isDown) this.player.move(0, 1, this.grid);
     }
 }
-
