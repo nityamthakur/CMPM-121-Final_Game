@@ -7,16 +7,18 @@ class MainMenuScene extends Phaser.Scene {
         // Set the path for all assets
         this.load.setPath('./assets/');
 
-        // Load images for the game
-        this.load.image('cabbage_1', 'cabbage_1.png');
-        this.load.image('cabbage_2', 'cabbage_2.png');
-        this.load.image('cabbage_3', 'cabbage_3.png');
-        this.load.image('carrot_1', 'carrot_1.png');
-        this.load.image('carrot_2', 'carrot_2.png');
-        this.load.image('carrot_3', 'carrot_3.png');
-        this.load.image('corn_1', 'corn_1.png');
-        this.load.image('corn_2', 'corn_2.png');
-        this.load.image('corn_3', 'corn_3.png');
+        // List of plant types and their growth stages
+        const plantTypes = ['cabbage', 'carrot', 'corn'];
+        const growthStages = [1, 2, 3];
+
+        // Load plant images dynamically
+        plantTypes.forEach((type) => {
+            growthStages.forEach((stage) => {
+                this.load.image(`${type}_${stage}`, `${type}_${stage}.png`);
+            });
+        });
+
+        // Load other game assets
         this.load.image('character', 'Character.png');
         this.load.image('grass', 'grass.png');
 
@@ -28,9 +30,6 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-        // Display background
-       // this.add.image(400, 300, 'grass');
-
         // Display title
         this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
 
@@ -60,7 +59,8 @@ class MainMenuScene extends Phaser.Scene {
                 '- Use arrow keys to move.\n' +
                 '- Reap and sow plants near you.\n' +
                 '- Manage sun and water to grow crops.\n' +
-                '- Reach the win condition to complete the level.'
+                '- Each plant has different costs and growth times.\n' +
+                '- Reach the goal to complete the level!'
             );
         } else {
             this.instructionText.setText('');
@@ -68,3 +68,4 @@ class MainMenuScene extends Phaser.Scene {
     }
 }
 
+//export default MainMenuScene;

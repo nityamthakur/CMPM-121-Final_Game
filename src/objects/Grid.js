@@ -29,7 +29,7 @@ class Grid {
 
                 // Initialize random sun and water levels
                 const sun = Phaser.Math.Between(1, 5);
-                const water = 0;
+                const water = Phaser.Math.Between(0, 3); // Water starts lower to reflect accumulation
                 sunWaterRow.push({ sun, water });
 
                 // Add sun/water display, adjust position for better visibility
@@ -54,8 +54,23 @@ class Grid {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 const cell = this.sunAndWater[y][x];
+                // Randomly regenerate sun levels
                 cell.sun = Phaser.Math.Between(1, 5);
-                cell.water = Math.min(cell.water + 1, 5);
+                // Accumulate water with a random increment
+                cell.water = Math.min(cell.water + Phaser.Math.Between(0, 2), 5); // Max water level = 5
+    
+                // Update sun and water display
+                this.scene.add.text(
+                    x * this.cellSize + 5,
+                    y * this.cellSize + 5,
+                    `S:${cell.sun}\nW:${cell.water}`,
+                    {
+                        fontSize: '12px',
+                        fill: '#fff',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        padding: { left: 2, right: 2, top: 2, bottom: 2 }
+                    }
+                );
             }
         }
     }
