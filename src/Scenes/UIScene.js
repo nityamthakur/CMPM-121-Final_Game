@@ -23,7 +23,7 @@ class UIScene extends Phaser.Scene {
             fontSize: '20px',
             fill: '#fff'
         });
-        this.goalText = this.add.text(820, 100, `Goal: $50`, {
+        this.goalText = this.add.text(820, 100, `Goal: 50g`, {
             fontSize: '20px',
             fill: '#fff'
         });
