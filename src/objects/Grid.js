@@ -84,6 +84,22 @@ class Grid {
         };
     }
 
+    addInitialPlants(initialPlants) {
+        initialPlants.forEach(({ x, y, type }) => {
+            const index = this.getIndex(x, y);
+
+            // Set plant type and reset growth stage
+            this.grid[index + 2] = type; // Plant type (numeric ID)
+            this.grid[index + 3] = 1; // Initial growth stage
+
+            // Add the plant visually on the grid
+            const plant = new Plant(this.scene, x, y, type);
+            plant.growth = 1; // Ensure growth stage is consistent
+            this.scene.plants.push(plant);
+            console.log(`Placed initial plant: ${type} at (${x}, ${y})`);
+        });
+    }
+
     serialize() {
         return {
             grid: Array.from(this.grid),
@@ -112,6 +128,20 @@ class Grid {
             console.error('Invalid grid data provided for deserialization.');
         }
     }
+
+    resize(newWidth, newHeight) {
+        this.width = newWidth;
+        this.height = newHeight;
+        this.grid = new Uint8Array(newWidth * newHeight * 4);
+
+        // Clear previous visual elements
+        this.tiles.forEach((row) => row.forEach((tile) => tile.destroy()));
+        this.sunAndWaterText.forEach((row) => row.forEach((text) => text.destroy()));
+
+        this.tiles = [];
+        this.sunAndWaterText = [];
+        this.createGrid();
+        console.log(`Grid resized to ${newWidth}x${newHeight}.`);
+    }
 }
 
-//export default Grid;

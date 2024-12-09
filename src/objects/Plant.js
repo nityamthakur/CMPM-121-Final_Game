@@ -1,8 +1,8 @@
 class Plant {
-    constructor(scene, x, y, type) {
+    constructor(scene, x, y, type, initialGrowth = 1) {
         this.scene = scene;
         this.type = type; // Plant type: cabbage, carrot, or corn
-        this.growth = 1; // Initial growth stage
+        this.growth = initialGrowth; // Initial growth stage
         this.position = { x, y };
 
         // Plant-specific data: cost, growth turns, and produce values
@@ -22,11 +22,11 @@ class Plant {
         const spriteX = x * cellSize + cellSize / 2;
         const spriteY = y * cellSize + cellSize / 2;
 
-        this.sprite = this.scene.add.sprite(spriteX, spriteY, `${type}_1`);
+        this.sprite = this.scene.add.sprite(spriteX, spriteY, `${type}_${this.growth}`);
 
         // Dynamic scaling based on cell size
         const maxPlantSize = cellSize - 10;
-        const plantTexture = this.scene.textures.get(`${type}_1`);
+        const plantTexture = this.scene.textures.get(`${type}_${this.growth}`);
         const scaleFactor = Math.min(
             maxPlantSize / plantTexture.getSourceImage().width,
             maxPlantSize / plantTexture.getSourceImage().height
@@ -34,9 +34,14 @@ class Plant {
 
         this.sprite.setScale(scaleFactor);
         this.sprite.setDepth(1); // Ensure the plant appears above the grid
-        console.log(`Creating plant sprite at (${spriteX}, ${spriteY}) for type: ${type}`);
+
+        console.log(`Creating plant sprite at (${spriteX}, ${spriteY}) for type: ${type}, growth stage: ${this.growth}`);
+
         // Track remaining turns needed for growth
-        this.growthTurnsLeft = [...this.plantData[type].growthTurns];
+        const maxGrowthStages = this.plantData[type].growthTurns.length;
+        this.growthTurnsLeft = this.growth <= maxGrowthStages
+            ? [...this.plantData[type].growthTurns].slice(this.growth - 1)
+            : [];
     }
 
     grow(sun, water) {
@@ -65,9 +70,17 @@ class Plant {
         );
 
         this.sprite.setScale(scaleFactor);
+        console.log(`Updated ${this.type} sprite to growth stage ${this.growth}`);
+    }
+
+    setGrowthStage(growth) {
+        this.growth = growth;
+        this.updateSprite();
     }
 
     getCost() {
         return this.plantData[this.type].cost;
     }
 }
+
+export default Plant;

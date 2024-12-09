@@ -7,35 +7,38 @@ class GameScene extends Phaser.Scene {
         // Initialize save and history managers
         this.saveSystem = new SaveSystem();
         this.historyManager = new HistoryManager();
-    
-        // Grid setup
-        const cellSize = 100; // Define grid cell size
+
+        // Scenario Manager Setup
+        this.scenarioManager = new ScenarioManager(this);
+
+        // Default Grid and Cell Size (overridden by scenario)
+        const cellSize = 100;
+        this.cellSize = cellSize; // Accessible globally within GameScene
         this.grid = new Grid(this, 5, 5, cellSize);
-        this.cellSize = cellSize; // Ensure cellSize is accessible globally within GameScene
-    
+
         // Player setup
         this.player = new Character(this, 0, 0, 'character', 0.1);
-    
-        // Currency and produce
-        this.currency = 20; // Starting currency
-        this.produceWeight = 0; // Total produce collected
-    
+
+        // Default Currency and Produce (overridden by scenario)
+        this.currency = 20;
+        this.produceWeight = 0;
+
         // Plants
         this.plants = [];
-    
+
         // Controls
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    
+
         // Launch UI Scene
         this.scene.launch('UIScene');
-    
+
         // Advance turn
         this.turnCount = 0;
         this.input.keyboard.on('keydown-SPACE', () => {
             this.advanceTurn();
         });
-    
+
         // Handle events from UIScene
         this.events.on('sowPlant', (type) => this.handleSowPlant(type));
         this.events.on('reapPlant', () => this.handleReapPlant());
@@ -43,18 +46,16 @@ class GameScene extends Phaser.Scene {
         this.events.on('loadGame', (slot) => this.loadGame(slot));
         this.events.on('undo', () => this.undoAction());
         this.events.on('redo', () => this.redoAction());
-    
-        // Check if starting a new game
-        if (data?.newGame) {
-            console.log('Starting a new game.');
+
+        // Load Scenario
+        if (data?.scenarioName) {
+            this.scenarioManager.loadScenario(data.scenarioName);
+            this.scenarioManager.applyScenario();
+        } else if (data?.newGame) {
+            console.log('Starting a new game with default settings.');
             this.pushGameStateToHistory();
-            return; // Skip loading auto-save
-        }
-    
-        // Check for auto-save and load if present
-        const autoSaveState = this.saveSystem.loadAuto();
-        if (autoSaveState) {
-            this.loadGameFromState(autoSaveState);
+        } else {
+            console.error('No valid scenario or save data provided.');
         }
     }
 
@@ -62,6 +63,9 @@ class GameScene extends Phaser.Scene {
         // Update resources and notify UIScene
         this.grid.updateResources();
         this.events.emit('updateTurn', ++this.turnCount);
+
+        // Handle special events
+        this.scenarioManager.handleSpecialEvents(this.turnCount);
 
         // Update plant growth
         this.plants.forEach((plant) => {
@@ -81,40 +85,35 @@ class GameScene extends Phaser.Scene {
 
     handleSowPlant(type) {
         const { x, y } = this.player.position;
-    
+
         // Check if there is already a plant in this cell
         if (this.getPlantAt(x, y)) {
             console.log('Cannot plant here: Tile is already occupied.');
             return;
         }
-    
-        const plantData = {
-            cabbage: { cost: 5 },
-            carrot: { cost: 3 },
-            corn: { cost: 7 },
-        };
-    
-        if (!plantData[type]) {
+
+        const plantData = this.scenarioManager.getPlantData(type);
+        if (!plantData) {
             console.log('Invalid plant type.');
             return;
         }
-    
-        const plantCost = plantData[type].cost;
-    
+
+        const plantCost = plantData.cost;
+
         // Check if the player has enough currency
         if (this.currency < plantCost) {
             console.log('Not enough currency to sow this plant.');
             return;
         }
-    
+
         // Deduct cost
         this.currency -= plantCost;
         this.events.emit('updateCurrency', this.currency);
-    
+
         // Create and place the plant
         const plant = new Plant(this, x, y, type);
         this.plants.push(plant);
-    
+
         console.log(`Planted ${type} at (${x}, ${y})`);
     }
 
@@ -156,7 +155,7 @@ class GameScene extends Phaser.Scene {
         this.saveSystem.saveToSlot(slot, gameState);
         console.log(`Game saved to slot: ${slot}`, gameState);
     }
-    
+
     loadGame(slot) {
         const gameState = this.saveSystem.loadFromSlot(slot);
         if (gameState) {
@@ -176,21 +175,20 @@ class GameScene extends Phaser.Scene {
         const previousState = this.historyManager.undo();
         if (previousState) {
             this.loadGameFromState(previousState);
-            this.events.emit('updateUI', previousState); // Update UI
+            this.events.emit('updateUI', previousState);
         }
     }
-    
+
     redoAction() {
         const nextState = this.historyManager.redo();
         if (nextState) {
             this.loadGameFromState(nextState);
-            this.events.emit('updateUI', nextState); // Update UI
+            this.events.emit('updateUI', nextState);
         }
     }
 
     pushGameStateToHistory() {
         const gameState = this.getCurrentGameState();
-        console.log('Pushing game state to history:', gameState);
         this.historyManager.pushState(gameState);
     }
 
@@ -204,7 +202,19 @@ class GameScene extends Phaser.Scene {
     }
 
     checkWinCondition() {
-        if (this.produceWeight >= 50) {
+        const winConditions = this.scenarioManager.getWinConditions() || [];
+        const achieved = winConditions.every(([type, condition, value]) => {
+            switch (condition) {
+                case 'min':
+                    return this.plants.filter((p) => p.type === type).length >= value;
+                case 'max':
+                    return this.plants.filter((p) => p.type === type).length <= value;
+                default:
+                    return false;
+            }
+        });
+
+        if (achieved) {
             this.scene.start('GameOverScene', { message: 'You Win!' });
         }
     }
@@ -219,7 +229,7 @@ class GameScene extends Phaser.Scene {
             plants: this.plants.map((plant) => ({
                 type: plant.type,
                 position: plant.position,
-                growth: plant.growth
+                growth: plant.growth,
             })),
         };
     }
@@ -227,24 +237,20 @@ class GameScene extends Phaser.Scene {
     loadGameFromState(state) {
         this.grid.deserialize(state.grid);
         this.player.position = state.player;
-        this.player.sprite.setPosition(
-            state.player.x * this.cellSize + this.cellSize / 2,
-            state.player.y * this.cellSize + this.cellSize / 2
-        );
         this.currency = state.currency;
         this.produceWeight = state.produceWeight;
         this.turnCount = state.turnCount;
-    
+
         // Clear existing plants and re-add from saved state
         this.plants.forEach((plant) => plant.sprite.destroy());
         this.plants = [];
         state.plants.forEach((plantData) => {
             const plant = new Plant(this, plantData.position.x, plantData.position.y, plantData.type);
-            plant.growth = plantData.growth; // Restore growth stage
-            plant.updateSprite(); // Update texture based on growth stage
+            plant.growth = plantData.growth;
+            plant.updateSprite();
             this.plants.push(plant);
         });
-    
+
         console.log('Game state fully restored:', state);
     }
 
@@ -255,3 +261,4 @@ class GameScene extends Phaser.Scene {
         if (this.cursors.down.isDown) this.player.move(0, 1, this.grid);
     }
 }
+
