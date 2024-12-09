@@ -1,0 +1,26 @@
+{
+    "main_menu": {
+        "title": "Simulador de Agricultura",
+        "start_new_game": "Iniciar Nuevo Juego",
+        "load_game": "Cargar Juego",
+        "resume_auto_save": "Reanudar Auto-Guardado",
+        "instructions": "Instrucciones",
+        "instructions_text": "Instrucciones:\n- Usa las flechas para moverte.\n- Siembra plantas con los botones.\n- Cosecha plantas cuando estén maduras.\n- Administra recursos (sol/agua).\n- Cosechar te da productos y dinero.\n- ¡Alcanza 50g de productos para ganar!",
+        "select_scenario": "Seleccionar Escenario",
+        "cancel": "Cancelar",
+        "no_saved_games": "No se encontraron juegos guardados.",
+        "available_saves": "Espacios de guardado disponibles",
+        "enter_save_slot": "Ingresa el nombre del espacio para cargar:",
+        "load_failed": "No se pudo cargar el espacio seleccionado."
+    },
+    "scenarios": {
+        "tutorial": {
+            "name": "Tutorial",
+            "description": "Aprende lo básico de plantar y cosechar."
+        },
+        "storm": {
+            "name": "Tormenta",
+            "description": "Sobrevive a un escenario de tormenta desafiante."
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "main_menu": {
+        "title": "Plant Farming Simulator",
+        "start_new_game": "Start New Game",
+        "load_game": "Load Game",
+        "resume_auto_save": "Resume Auto-Save",
+        "instructions": "Instructions",
+        "instructions_text": "Instructions:\n- Use arrow keys to move.\n- Sow plants using the buttons.\n- Reap plants when fully grown.\n- Manage resources (sun/water).\n- Reaping earns both produce and currency.\n- Reach 50g of produce to win!",
+        "select_scenario": "Select a Scenario",
+        "cancel": "Cancel",
+        "no_saved_games": "No saved games found.",
+        "available_saves": "Available save slots",
+        "enter_save_slot": "Enter the slot name to load:",
+        "load_failed": "Failed to load the selected save slot."
+    },
+    "scenarios": {
+        "tutorial": {
+            "name": "Tutorial",
+            "description": "Learn the basics of planting and harvesting."
+        },
+        "storm": {
+            "name": "Storm",
+            "description": "Survive a challenging storm scenario."
+        }
+    }
+}
