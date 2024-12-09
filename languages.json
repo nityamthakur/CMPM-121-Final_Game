@@ -1,0 +1,83 @@
+{
+    "en": {
+      "main_menu": {
+        "title": "Plant Farming Game",
+        "start_game": "Start Game",
+        "load_game": "Load Game",
+        "instructions": "Instructions",
+        "select_language": "Select Language"
+      },
+      "instructions": {
+        "text": "Move with arrow keys. Sow plants and reap them when fully grown."
+      },
+      "ui": {
+        "currency": "Currency",
+        "produce": "Produce",
+        "turn": "Turn",
+        "sow": "Sow",
+        "reap": "Reap",
+        "save": "Save",
+        "load": "Load",
+        "undo": "Undo",
+        "redo": "Redo"
+      },
+      "game_over": {
+        "win": "You Win!",
+        "lose": "You Lose!"
+      }
+    },
+    "ar": {
+      "main_menu": {
+        "title": "لعبة زراعة النباتات",
+        "start_game": "ابدأ اللعبة",
+        "load_game": "تحميل اللعبة",
+        "instructions": "تعليمات",
+        "select_language": "اختر اللغة"
+      },
+      "instructions": {
+        "text": "تحرك بمفاتيح الأسهم. ازرع النباتات وحصدها عندما تنضج تمامًا."
+      },
+      "ui": {
+        "currency": "العملة",
+        "produce": "المنتجات",
+        "turn": "الدور",
+        "sow": "ازرع",
+        "reap": "احصد",
+        "save": "حفظ",
+        "load": "تحميل",
+        "undo": "تراجع",
+        "redo": "إعادة"
+      },
+      "game_over": {
+        "win": "لقد فزت!",
+        "lose": "لقد خسرت!"
+      }
+    },
+    "zh": {
+      "main_menu": {
+        "title": "种植农场游戏",
+        "start_game": "开始游戏",
+        "load_game": "加载游戏",
+        "instructions": "说明",
+        "select_language": "选择语言"
+      },
+      "instructions": {
+        "text": "用箭头键移动。播种并在完全成熟时收割。"
+      },
+      "ui": {
+        "currency": "货币",
+        "produce": "产品",
+        "turn": "回合",
+        "sow": "播种",
+        "reap": "收割",
+        "save": "保存",
+        "load": "加载",
+        "undo": "撤销",
+        "redo": "重做"
+      },
+      "game_over": {
+        "win": "你赢了！",
+        "lose": "你输了！"
+      }
+    }
+  }
