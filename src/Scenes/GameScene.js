@@ -9,34 +9,25 @@ class GameScene extends Phaser.Scene {
         this.historyManager = new HistoryManager();
 
         // Initialize Scenario Manager
-    this.scenarioManager = new ScenarioManager(this);
+        this.scenarioManager = new ScenarioManager(this);
 
-    // Load the selected scenario
-    const scenarioPath = `scenarios/${data?.scenarioName || 'tutorial.yaml'}`;
-    this.scenarioManager
-        .loadScenario(scenarioPath)
-        .then(() => {
-            console.log('Scenario applied:', this.scenarioManager.getScenario());
-            this.scenarioManager.applyScenario(); // Apply the loaded scenario
-        })
-        .catch((error) => {
-            console.error('Error loading scenario:', error);
-        });
-
-        // Default Grid and Cell Size (overridden by scenario)
+        // Default Grid and Cell Size
         const cellSize = 100;
         this.cellSize = cellSize; // Accessible globally within GameScene
+
+        // Initialize grid with default dimensions (5x5); will be resized if the scenario specifies different dimensions
         this.grid = new Grid(this, 5, 5, cellSize);
 
         // Player setup
-        this.player = new Character(this, 0, 0, 'character', 0.5);
+        this.player = new Character(this, 0, 0, 'character', 0.1);
 
-        // Default Currency and Produce (overridden by scenario)
+        // Default Currency and Produce (will be overridden by scenario if defined)
         this.currency = 20;
         this.produceWeight = 0;
 
         // Plants
         this.plants = [];
+        this.plantManager = new PlantManager(this);
 
         // Controls
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -62,7 +53,7 @@ class GameScene extends Phaser.Scene {
         // Load Scenario
         if (data?.scenarioName) {
             this.scenarioManager.loadScenario(data.scenarioName);
-            this.scenarioManager.applyScenario();
+            this.scenarioManager.applyScenario(); // Apply the loaded scenario
         } else if (data?.newGame) {
             console.log('Starting a new game with default settings.');
             this.pushGameStateToHistory();
@@ -75,58 +66,64 @@ class GameScene extends Phaser.Scene {
         // Update resources and notify UIScene
         this.grid.updateResources();
         this.events.emit('updateTurn', ++this.turnCount);
-
+    
         // Handle special events
         this.scenarioManager.handleSpecialEvents(this.turnCount);
-
+    
         // Update plant growth
         this.plants.forEach((plant) => {
             const resources = this.grid.getResourcesAt(plant.position.x, plant.position.y);
-            plant.grow(resources.sun, resources.water);
+            const neighbors = this.plantManager.getNeighboringPlants(
+                plant.position.x,
+                plant.position.y
+            );
+            plant.grow(resources, neighbors);
         });
-
+    
         // Push the new state to history
         this.pushGameStateToHistory();
-
+    
         // Auto-save after advancing the turn
         this.autoSave();
-
+    
         // Check win condition
         this.checkWinCondition();
     }
 
     handleSowPlant(type) {
         const { x, y } = this.player.position;
-
+    
         // Check if there is already a plant in this cell
         if (this.getPlantAt(x, y)) {
             console.log('Cannot plant here: Tile is already occupied.');
             return;
         }
-
-        const plantData = this.scenarioManager.getPlantData(type);
-        if (!plantData) {
-            console.log('Invalid plant type.');
+    
+        // Get the plant definition and cost
+        const plantDefinition = PlantDefinitions.getPlantDefinition(type);
+        if (!plantDefinition) {
+            console.error(`Plant type "${type}" is not defined.`);
             return;
         }
-
-        const plantCost = plantData.cost;
-
+    
+        const plantCost = plantDefinition.cost;
+    
         // Check if the player has enough currency
         if (this.currency < plantCost) {
             console.log('Not enough currency to sow this plant.');
             return;
         }
-
+    
         // Deduct cost
         this.currency -= plantCost;
         this.events.emit('updateCurrency', this.currency);
-
-        // Create and place the plant
-        const plant = new Plant(this, x, y, type);
-        this.plants.push(plant);
-
-        console.log(`Planted ${type} at (${x}, ${y})`);
+    
+        // Use PlantManager to create and place the plant
+        const plant = this.plantManager.createPlant(type, x, y);
+        if (plant) {
+            this.plants.push(plant);
+            console.log(`Planted ${type} at (${x}, ${y})`);
+        }
     }
 
     handleReapPlant() {

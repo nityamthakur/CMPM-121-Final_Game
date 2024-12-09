@@ -1,5 +1,5 @@
 class Character {
-    constructor(scene, x, y, texture, scale = 0.5) { // Adjust scale to match grid cell size
+    constructor(scene, x, y, texture, scale = 0.5) {
         this.scene = scene;
         this.sprite = scene.add.sprite(
             x * scene.cellSize + scene.cellSize / 2,
@@ -8,6 +8,7 @@ class Character {
         );
         this.sprite.setScale(scale);
         this.sprite.setOrigin(0.5);
+        this.sprite.setDepth(2); // Set depth higher than grid tiles
         this.speed = 10; // Movement speed in pixels per second
         this.position = { x: x, y: y }; // Initial grid position
         this.isMoving = false; // Track whether the character is currently moving

@@ -28,11 +28,6 @@ class Plant {
         console.log(`Created plant "${type}" at (${x}, ${y}) with growth rules.`);
     }
 
-    /**
-     * Check if the plant can grow based on resources and growth rules.
-     * @param {Object} resources - The resources (sun, water) available at the plant's grid cell.
-     * @param {Array<Object>} neighbors - Array of neighboring plants.
-     */
     grow(resources, neighbors) {
         if (this.growth < 3) {
             const canGrow = this.growthRules.every((rule) =>
@@ -46,19 +41,18 @@ class Plant {
             if (canGrow) {
                 this.growth++;
                 this.updateSprite();
-                console.log(`Plant "${this.type}" at (${this.position.x}, ${this.position.y}) grew to stage ${this.growth}.`);
+                console.log(
+                    `Plant "${this.type}" at (${this.position.x}, ${this.position.y}) grew to stage ${this.growth}.`
+                );
             }
         }
     }
 
-    /**
-     * Update the sprite of the plant based on its growth stage.
-     */
     updateSprite() {
         const textureKey = `${this.type}_${this.growth}`;
         this.sprite.setTexture(textureKey);
 
-        // Adjust scaling dynamically for the new sprite
+        // Adjust scaling dynamically for the new texture
         const maxPlantSize = this.scene.cellSize - 10;
         const plantTexture = this.scene.textures.get(textureKey);
         const scaleFactor = Math.min(

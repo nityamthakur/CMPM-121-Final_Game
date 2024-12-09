@@ -18,20 +18,16 @@ class PlantManager {
         if (!plantDefinition) {
             console.error(`Plant type "${type}" is not defined.`);
             return null;
-        }
+    }
 
-        const plant = {
+        // Use the Plant class to create a new plant instance
+        const plant = new Plant(
+            this.scene,
+            x,
+            y,
             type,
-            position: { x, y },
-            growth: 1,
-            produceValue: plantDefinition.produceValue,
-            growthRules: plantDefinition.growthRules,
-            sprite: this.scene.add.sprite(
-                x * this.scene.cellSize + this.scene.cellSize / 2,
-                y * this.scene.cellSize + this.scene.cellSize / 2,
-                `${type}_1`
-            ),
-        };
+            plantDefinition
+        );
 
         // Scale the sprite dynamically
         const maxPlantSize = this.scene.cellSize - 10;
