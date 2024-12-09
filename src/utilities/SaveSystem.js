@@ -38,9 +38,13 @@ class SaveSystem {
      * @param {object} gameState - The game state to auto-save.
      */
     saveAuto(gameState) {
-        const serializedState = JSON.stringify(gameState);
-        localStorage.setItem(this.autoSaveKey, serializedState);
-        console.log('Game auto-saved.');
+        try {
+            const serializedState = JSON.stringify(gameState);
+            localStorage.setItem(this.autoSaveKey, serializedState);
+            console.log('Game auto-saved successfully.');
+        } catch (error) {
+            console.error('Failed to auto-save:', error);
+        }
     }
 
     /**

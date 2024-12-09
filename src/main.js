@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 // Configuration for Phaser Game
 let config = {
     type: Phaser.AUTO,
@@ -17,10 +15,11 @@ let config = {
         }
     },
     scene: [
-        MainMenuScene, // This includes both BootScene and MainMenuScene
-        GameScene,
-        UIScene,
-        GameOverScene
+        BootScene,      // First scene to preload all assets
+        MainMenuScene,  // Main menu scene for starting or loading the game
+        GameScene,      // Main gameplay scene
+        UIScene,        // UI overlay for in-game information and controls
+        GameOverScene   // Scene for displaying win/lose messages
     ]
 };
 

@@ -1,32 +1,39 @@
 class Character {
-    constructor(scene, x, y, texture, scale = 0.1) {
+    constructor(scene, x, y, texture, scale = 0.5) { // Adjust scale to match grid cell size
         this.scene = scene;
-        this.sprite = scene.add.sprite(x, y, texture);
+        this.sprite = scene.add.sprite(
+            x * scene.cellSize + scene.cellSize / 2,
+            y * scene.cellSize + scene.cellSize / 2,
+            texture
+        );
         this.sprite.setScale(scale);
         this.sprite.setOrigin(0.5);
         this.speed = 10; // Movement speed in pixels per second
-        this.position = { x: 0, y: 0 }; // Grid position
+        this.position = { x: x, y: y }; // Initial grid position
         this.isMoving = false; // Track whether the character is currently moving
     }
 
-    move(dx, dy, gridSize) {
+    move(dx, dy, grid) {
         // Prevent starting a new move while still moving
-        if (this.isMoving) return;
+        if (this.isMoving) {
+            console.log('Character is currently moving.');
+            return;
+        }
 
         const newX = this.position.x + dx;
         const newY = this.position.y + dy;
 
-        // Ensure the player stays within bounds
-        if (newX >= 0 && newX < gridSize.width && newY >= 0 && newY < gridSize.height) {
-            this.isMoving = true;
+        // Ensure the player stays within bounds of the grid
+        if (newX >= 0 && newX < grid.width && newY >= 0 && newY < grid.height) {
+            this.isMoving = true; // Prevent additional movement until the current move is completed
 
-            // Update grid position
+            console.log(`Moving to: x=${newX}, y=${newY}`);
             this.position.x = newX;
             this.position.y = newY;
 
-            // Calculate target position in pixels
-            const targetX = this.position.x * this.scene.cellSize + this.scene.cellSize / 2;
-            const targetY = this.position.y * this.scene.cellSize + this.scene.cellSize / 2;
+            // Calculate the target position in pixels
+            const targetX = newX * grid.cellSize + grid.cellSize / 2;
+            const targetY = newY * grid.cellSize + grid.cellSize / 2;
 
             // Smooth movement using Phaser's tween system
             this.scene.tweens.add({
@@ -36,9 +43,11 @@ class Character {
                 duration: 1000 / this.speed, // Duration based on speed
                 onComplete: () => {
                     this.isMoving = false; // Allow new movement once the tween is complete
-                }
+                    console.log('Movement complete.');
+                },
             });
+        } else {
+            console.log('Move out of bounds prevented.');
         }
     }
 }
-

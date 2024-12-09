@@ -6,32 +6,6 @@ class MainMenuScene extends Phaser.Scene {
         this.saveSystem = new SaveSystem();
     }
 
-    preload() {
-        // Set the path for all assets
-        this.load.setPath('./assets/');
-
-        // List of plant types and their growth stages
-        const plantTypes = ['cabbage', 'carrot', 'corn'];
-        const growthStages = [1, 2, 3];
-
-        // Load plant images dynamically
-        plantTypes.forEach((type) => {
-            growthStages.forEach((stage) => {
-                this.load.image(`${type}_${stage}`, `${type}_${stage}.png`);
-            });
-        });
-
-        // Load other game assets
-        this.load.image('character', 'Character.png');
-        this.load.image('grass', 'grass.png');
-
-        // Display loading progress
-        const loadingText = this.add.text(20, 20, 'Loading...', { fontSize: '20px', fill: '#FFFFFF' });
-        this.load.on('progress', (progress) => {
-            loadingText.setText(`Loading: ${Math.round(progress * 100)}%`);
-        });
-    }
-
     create() {
         // Display title
         this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
@@ -69,7 +43,13 @@ class MainMenuScene extends Phaser.Scene {
     }
 
     startNewGame() {
-        this.scene.start('GameScene');
+        const saveSystem = new SaveSystem();
+    
+        // Clear auto-save data
+        saveSystem.deleteSave('auto');
+    
+        // Start a fresh game
+        this.scene.start('GameScene', { newGame: true });
     }
 
     loadGameMenu() {
@@ -114,4 +94,3 @@ class MainMenuScene extends Phaser.Scene {
         }
     }
 }
-
