@@ -18,25 +18,29 @@ class UIScene extends Phaser.Scene {
             fill: '#fff'
         });
 
-        // Produce display
-        this.produceText = this.add.text(820, 70, 'Produce: 0g', {
+        // Produce display and goal
+        this.produceText = this.add.text(820, 70, `Produce: 0g`, {
+            fontSize: '20px',
+            fill: '#fff'
+        });
+        this.goalText = this.add.text(820, 100, `Goal: $50`, {
             fontSize: '20px',
             fill: '#fff'
         });
 
         // Plant explanations
-        this.add.text(820, 110, 'Plants:', { fontSize: '24px', fill: '#fff' });
+        this.add.text(820, 140, 'Plants:', { fontSize: '24px', fill: '#fff' });
         this.add.text(
             820,
-            140,
+            170,
             'Cabbage: $5, +10g\nCarrot: $3, +5g\nCorn: $7, +15g',
             { fontSize: '16px', fill: '#fff' }
         );
 
         // Sow buttons
-        this.add.text(820, 200, 'Sow Plants:', { fontSize: '20px', fill: '#fff' });
+        this.add.text(820, 230, 'Sow Plants:', { fontSize: '20px', fill: '#fff' });
 
-        const sowCabbageButton = this.add.text(820, 230, 'Sow Cabbage', {
+        const sowCabbageButton = this.add.text(820, 260, 'Sow Cabbage', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#228B22',
@@ -45,7 +49,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.sowPlant('cabbage'));
 
-        const sowCarrotButton = this.add.text(820, 270, 'Sow Carrot', {
+        const sowCarrotButton = this.add.text(820, 300, 'Sow Carrot', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#FF8C00',
@@ -54,7 +58,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.sowPlant('carrot'));
 
-        const sowCornButton = this.add.text(820, 310, 'Sow Corn', {
+        const sowCornButton = this.add.text(820, 340, 'Sow Corn', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#FFD700',
@@ -64,7 +68,7 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.sowPlant('corn'));
 
         // Reap button
-        const reapButton = this.add.text(820, 350, 'Reap Plant', {
+        const reapButton = this.add.text(820, 380, 'Reap Plant', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#8B0000',
@@ -72,6 +76,23 @@ class UIScene extends Phaser.Scene {
         })
             .setInteractive()
             .on('pointerdown', () => this.reapPlant());
+
+        // Instructions button
+        const instructionsButton = this.add.text(820, 420, 'Instructions', {
+            fontSize: '18px',
+            fill: '#fff',
+            backgroundColor: '#555',
+            padding: { left: 10, right: 10, top: 5, bottom: 5 }
+        })
+            .setInteractive()
+            .on('pointerdown', () => this.showInstructions());
+
+        this.instructionText = this.add.text(
+            820,
+            480,
+            '',
+            { fontSize: '16px', fill: '#fff', wordWrap: { width: 180 } }
+        ).setVisible(false);
 
         // Event listeners for GameScene updates
         this.scene.get('GameScene').events.on('updateTurn', (turn) => {
@@ -88,12 +109,10 @@ class UIScene extends Phaser.Scene {
     }
 
     sowPlant(type) {
-        // Emit sowPlant event to GameScene
         this.scene.get('GameScene').events.emit('sowPlant', type);
     }
 
     reapPlant() {
-        // Emit reapPlant event to GameScene
         this.scene.get('GameScene').events.emit('reapPlant');
     }
 
@@ -109,7 +128,28 @@ class UIScene extends Phaser.Scene {
     updateCurrency(currency) {
         this.currency = currency;
         this.currencyText.setText(`Currency: $${currency}`);
+
+        // Trigger GameOverScene if goal is met
+        if (currency >= 50) {
+            this.scene.get('GameScene').scene.start('GameOverScene', { message: 'You Win!' });
+        }
+    }
+
+    showInstructions() {
+        const visible = this.instructionText.visible;
+        this.instructionText.setVisible(!visible);
+        if (!visible) {
+            this.instructionText.setText(
+                'Instructions:\n' +
+                '- Use arrow keys to move.\n' +
+                '- Sow plants using the buttons.\n' +
+                '- Reap plants when fully grown.\n' +
+                '- Manage resources (sun/water).\n' +
+                '- Reach $50 to win!'
+            );
+        } else {
+            this.instructionText.setText('');
+        }
     }
 }
 
-//export default UIScene;

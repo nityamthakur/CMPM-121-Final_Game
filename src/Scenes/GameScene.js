@@ -44,56 +44,57 @@ class GameScene extends Phaser.Scene {
         // Update resources and notify UIScene
         this.grid.updateResources();
         this.events.emit('updateTurn', ++this.turnCount);
-    
+
         // Update plant growth
         this.plants.forEach((plant) => {
             const resources = this.grid.getResourcesAt(plant.position.x, plant.position.y);
             plant.grow(resources.sun, resources.water);
         });
-    
-        // Check win condition
-        if (this.produceWeight >= 50) {
-            this.scene.start('GameOverScene', { message: 'You Win!' });
-        }
+
+        // Check win condition after each turn
+        this.checkWinCondition();
     }
 
     handleSowPlant(type) {
         const { x, y } = this.player.position;
-    
+
         // Check if there is already a plant in this cell
         if (this.getPlantAt(x, y)) {
             console.log('Cannot plant here: Tile is already occupied.');
             return;
         }
-    
+
         // Get plant cost
         const plantData = {
             cabbage: { cost: 5 },
             carrot: { cost: 3 },
             corn: { cost: 7 }
         };
-    
+
         if (!plantData[type]) {
             console.log('Invalid plant type.');
             return;
         }
-    
+
         const plantCost = plantData[type].cost;
-    
+
         // Check if the player has enough currency
         if (this.currency < plantCost) {
             console.log('Not enough currency to sow this plant.');
             return;
         }
-    
+
         // Deduct cost and notify UIScene
         this.currency -= plantCost;
         this.events.emit('updateCurrency', this.currency);
-    
+
         // Plant the seed
         const plant = new Plant(this, x, y, type);
         this.plants.push(plant);
         console.log(`Planted ${type} at (${x}, ${y})`);
+
+        // Check win condition after planting
+        this.checkWinCondition();
     }
 
     handleReapPlant() {
@@ -112,13 +113,16 @@ class GameScene extends Phaser.Scene {
             this.produceWeight += produce;
 
             // Add produce weight and currency
-            this.currency += produce; // Optional: Reward currency for reaping
+            this.currency += produce; // Reward currency equal to the produce weight
             this.events.emit('updateCurrency', this.currency);
             this.events.emit('updateProduce', this.produceWeight);
 
             // Remove the plant
             this.removePlant(plant);
             console.log(`Reaped ${plant.type} and earned ${produce}g of produce.`);
+
+            // Check win condition after reaping
+            this.checkWinCondition();
         } else {
             console.log('Plant is not fully grown yet.');
         }
@@ -132,6 +136,12 @@ class GameScene extends Phaser.Scene {
         // Remove the plant from the grid and the plants array
         plant.sprite.destroy();
         this.plants = this.plants.filter((p) => p !== plant);
+    }
+
+    checkWinCondition() {
+        if (this.produceWeight >= 50) {
+            this.scene.start('GameOverScene', { message: 'You Win!' });
+        }
     }
 
     update() {
