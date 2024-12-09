@@ -6,30 +6,30 @@ class MainMenuScene extends Phaser.Scene {
 
     create() {
         // Display title
-        this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
+        this.add.text(400, 100, t('main_menu.title'), { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
 
         // Add "Start New Game" button
-        const startButton = this.add.text(400, 200, 'Start New Game', { fontSize: '24px', fill: '#fff' })
+        const startButton = this.add.text(400, 200, t('main_menu.start_new_game'), { fontSize: '24px', fill: '#fff' })
             .setInteractive()
             .setOrigin(0.5);
         startButton.on('pointerdown', () => this.showScenarioMenu());
 
         // Add "Load Game" button
-        const loadButton = this.add.text(400, 250, 'Load Game', { fontSize: '24px', fill: '#fff' })
+        const loadButton = this.add.text(400, 250, t('main_menu.load_game'), { fontSize: '24px', fill: '#fff' })
             .setInteractive()
             .setOrigin(0.5);
         loadButton.on('pointerdown', () => this.loadGameMenu());
 
         // Add "Resume Auto-Save" button (only if an auto-save exists)
         if (this.saveSystem.hasAutoSave()) {
-            const resumeButton = this.add.text(400, 300, 'Resume Auto-Save', { fontSize: '24px', fill: '#fff' })
+            const resumeButton = this.add.text(400, 300, t('main_menu.resume_auto_save'), { fontSize: '24px', fill: '#fff' })
                 .setInteractive()
                 .setOrigin(0.5);
             resumeButton.on('pointerdown', () => this.resumeAutoSave());
         }
 
         // Add "Instructions" button
-        const instructionsButton = this.add.text(400, 350, 'Instructions', { fontSize: '24px', fill: '#fff' })
+        const instructionsButton = this.add.text(400, 350, t('main_menu.instructions'), { fontSize: '24px', fill: '#fff' })
             .setInteractive()
             .setOrigin(0.5);
         instructionsButton.on('pointerdown', () => this.showInstructions());
@@ -52,13 +52,13 @@ class MainMenuScene extends Phaser.Scene {
         this.scenarioMenu.add(background);
 
         // Add a title
-        const title = this.add.text(0, -120, 'Select a Scenario', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
+        const title = this.add.text(0, -120, t('main_menu.select_scenario'), { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
         this.scenarioMenu.add(title);
 
         // List scenarios (hardcoded for now, but can be dynamically loaded)
         const scenarios = ['tutorial', 'storm'];
         scenarios.forEach((scenario, index) => {
-            const button = this.add.text(0, -50 + index * 50, scenario, { fontSize: '20px', fill: '#fff' })
+            const button = this.add.text(0, -50 + index * 50, t(`scenarios.${scenario}.name`), { fontSize: '20px', fill: '#fff' })
                 .setInteractive()
                 .setOrigin(0.5);
             button.on('pointerdown', () => this.startNewGameWithScenario(scenario));
@@ -66,7 +66,7 @@ class MainMenuScene extends Phaser.Scene {
         });
 
         // Add a close button
-        const closeButton = this.add.text(0, 100, 'Cancel', { fontSize: '20px', fill: '#ff0000' })
+        const closeButton = this.add.text(0, 100, t('main_menu.cancel'), { fontSize: '20px', fill: '#ff0000' })
             .setInteractive()
             .setOrigin(0.5);
         closeButton.on('pointerdown', () => this.scenarioMenu.setVisible(false));
@@ -77,10 +77,10 @@ class MainMenuScene extends Phaser.Scene {
 
     startNewGameWithScenario(scenario) {
         const saveSystem = new SaveSystem();
-    
+
         // Clear auto-save data
         saveSystem.deleteSave('auto');
-    
+
         // Start the game with the selected scenario
         this.scene.start('GameScene', { newGame: true, scenarioName: scenario });
     }
@@ -88,17 +88,17 @@ class MainMenuScene extends Phaser.Scene {
     loadGameMenu() {
         const saveSlots = this.saveSystem.listSaveSlots();
         if (saveSlots.length === 0) {
-            alert('No saved games found.');
+            alert(t('main_menu.no_saved_games'));
             return;
         }
 
-        const slot = prompt(`Available save slots:\n${saveSlots.join('\n')}\n\nEnter the slot name to load:`);
+        const slot = prompt(`${t('main_menu.available_saves')}:\n${saveSlots.join('\n')}\n\n${t('main_menu.enter_save_slot')}`);
         if (slot && saveSlots.includes(slot)) {
             const savedState = this.saveSystem.loadFromSlot(slot);
             if (savedState) {
                 this.scene.start('GameScene', { savedState });
             } else {
-                alert('Failed to load the selected save slot.');
+                alert(t('main_menu.load_failed'));
             }
         }
     }
@@ -113,18 +113,9 @@ class MainMenuScene extends Phaser.Scene {
     showInstructions() {
         this.instructionText.visible = !this.instructionText.visible;
         if (this.instructionText.visible) {
-            this.instructionText.setText(
-                'Instructions:\n' +
-                '- Use arrow keys to move.\n' +
-                '- Sow plants using the buttons.\n' +
-                '- Reap plants when fully grown.\n' +
-                '- Manage resources (sun/water).\n' +
-                '- Reaping earns both produce and currency.\n' +
-                '- Reach 50g of produce to win!'
-            );
+            this.instructionText.setText(t('main_menu.instructions_text'));
         } else {
             this.instructionText.setText('');
         }
     }
 }
-
