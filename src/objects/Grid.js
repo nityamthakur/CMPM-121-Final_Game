@@ -16,27 +16,33 @@ class Grid {
             const row = [];
             const sunWaterRow = [];
             for (let x = 0; x < this.width; x++) {
-                const cell = this.scene.add.rectangle(
+                // Create a tile using grass.png
+                const tile = this.scene.add.sprite(
                     x * this.cellSize + this.cellSize / 2,
                     y * this.cellSize + this.cellSize / 2,
-                    this.cellSize - 10, // Space between tiles
-                    this.cellSize - 10,
-                    0x228b22
+                    'grass' // Use grass.png from assets
                 );
-                cell.setStrokeStyle(2, 0x000000);
-                row.push(cell);
+
+                // Scale the grass sprite to fit the grid cell
+                tile.setDisplaySize(this.cellSize - 5, this.cellSize - 5);
+                row.push(tile);
 
                 // Initialize random sun and water levels
                 const sun = Phaser.Math.Between(1, 5);
                 const water = 0;
                 sunWaterRow.push({ sun, water });
 
-                // Add sun/water display
+                // Add sun/water display, adjust position for better visibility
                 this.scene.add.text(
-                    x * this.cellSize + 10,
-                    y * this.cellSize + 10,
+                    x * this.cellSize + 5,
+                    y * this.cellSize + 5,
                     `S:${sun}\nW:${water}`,
-                    { fontSize: '16px', fill: '#fff' }
+                    {
+                        fontSize: '12px',
+                        fill: '#fff',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        padding: { left: 2, right: 2, top: 2, bottom: 2 }
+                    }
                 );
             }
             this.tiles.push(row);

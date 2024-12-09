@@ -29,7 +29,7 @@ class MainMenuScene extends Phaser.Scene {
 
     create() {
         // Display background
-        this.add.image(400, 300, 'grass');
+       // this.add.image(400, 300, 'grass');
 
         // Display title
         this.add.text(400, 100, 'Plant Farming Simulator', { fontSize: '32px', fill: '#fff' }).setOrigin(0.5);
