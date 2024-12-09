@@ -46,13 +46,67 @@ By approaching the project with **JavaScript**, **Phaser**, and lightweight auth
 
 - **[F0.g] Play scenario with a completion condition**: The win condition requires collecting 50g of produce. Players must strategically plant, reap, and manage resources to achieve the goal.
 
+## Devlog Entry for F1
+
+### How We Satisfied the Software Requirements
+
+- **[F1.a] Grid state stored in a single byte array**:
+    - Each cell is represented using 4 bytes: `sun`, `water`, `plantType`, and `growthStage`.
+    - Array-of-Structures (AoS) format is used for efficient data handling.
+    - [F1.a data structure diagram]
+
+```mermaid
+block-beta
+columns 1
+    A["Array Buffer (AOS)"]
+    BlockArrow<["Split into 4 Byte Chunks"]>(down)
+    block:array
+        B["n+3 to n"]
+        C["15 to 12"]
+        D["11 to 8"]
+        E["7 to 4"]
+        F["3 to 0"]
+    end
+    BlockArrow2<["Each Chunk Represents a Struct"]>(down)
+    block:struct
+        a["uint8 0"]
+        b["uint8 1"]
+        c["uint8 2"]
+        d["uint8 3"]
+    end
+    block:inside
+        1["Sun"]
+        2["Water"]
+        3["Plant Type"]
+        4["Growth Stage"]
+    end
+
+    a-->1
+    b-->2
+    c-->3
+    d-->4
+
+
+```
+    
+- **[F1.b] Save and load game state**: A JSON-based save/load system supports manual saves, auto-saves, and loading saved states.
+
+- **[F1.c] Undo/redo functionality**: Added a history stack that stores game states, and actions are reversible with UI updates.
+
+- **[F1.d] Improved player feedback**: Added visual cues, hover effects, and a message log for clear communication of actions and goals.
+
+- **[F1.e] Clear narration of player actions**: Action logs narrate each step taken by the player.
+
+- **[F1.f] Indirect effect feedback**: Animations and effects visually highlight changes like plant growth and grid updates.
+
+- **[F1.g] Use of audio feedback**: Placeholder audio cues were added to emphasize key actions and events.
+
+---
+
 ### Reflection
 
-Reflecting on the F0 implementation, some adjustments were necessary:
-- **Engine Choice**: Initially, TypeScript was planned, but JavaScript was chosen for simplicity and compatibility with Phaser and Live Server. This decision streamlined debugging and reduced setup complexity for rapid prototyping.
-- **Grid Size**: The grid size was reduced from 10x10 to 5x5 to simplify gameplay and ensure clear visibility of sprites and resources on screen.
-- **Plant Scaling**: Sprites for plants were scaled dynamically to fit grid cells without overlapping, addressing early visual clutter.
-- **Currency and Produce System**: The interplay between currency (to sow plants) and produce weight (for the goal) was revised. Reaping now rewards both currency and produce, ensuring players can continue sowing new plants while progressing toward the goal.
-- **Focus on Phaser**: Initially, JSON and advanced state management were prioritized, but for F0, simpler Phaser-based solutions were used. This focus allowed faster iteration while deferring complex requirements like undo/redo for F1.
+- **Undo/Redo Enhancements**: We refined state management to ensure UI consistency during undo/redo actions.
+- **Save/Load System Debugging**: Addressed issues where auto-saves interfered with starting a new game.
+- **Visual Scaling**: Resolved issues with plant rendering by unifying grid and sprite scaling.
 
-These changes reflect a commitment to iterative improvement, prioritizing clarity and playability over overly ambitious goals for the early phase. The experience highlighted the importance of balancing technical complexity with deliverable features in solo development.
+These adjustments highlight the evolution of our game design and the importance of user feedback.
