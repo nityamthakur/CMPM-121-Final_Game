@@ -8,8 +8,20 @@ class GameScene extends Phaser.Scene {
         this.saveSystem = new SaveSystem();
         this.historyManager = new HistoryManager();
 
-        // Scenario Manager Setup
-        this.scenarioManager = new ScenarioManager(this);
+        // Initialize Scenario Manager
+    this.scenarioManager = new ScenarioManager(this);
+
+    // Load the selected scenario
+    const scenarioPath = `scenarios/${data?.scenarioName || 'tutorial.yaml'}`;
+    this.scenarioManager
+        .loadScenario(scenarioPath)
+        .then(() => {
+            console.log('Scenario applied:', this.scenarioManager.getScenario());
+            this.scenarioManager.applyScenario(); // Apply the loaded scenario
+        })
+        .catch((error) => {
+            console.error('Error loading scenario:', error);
+        });
 
         // Default Grid and Cell Size (overridden by scenario)
         const cellSize = 100;
