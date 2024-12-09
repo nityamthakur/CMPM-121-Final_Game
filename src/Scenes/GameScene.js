@@ -175,20 +175,16 @@ class GameScene extends Phaser.Scene {
     undoAction() {
         const previousState = this.historyManager.undo();
         if (previousState) {
-            console.log('Undo successful. Restoring state:', previousState);
             this.loadGameFromState(previousState);
-        } else {
-            console.log('No state to undo.');
+            this.events.emit('updateUI', previousState); // Update UI
         }
     }
     
     redoAction() {
         const nextState = this.historyManager.redo();
         if (nextState) {
-            console.log('Redo successful. Restoring state:', nextState);
             this.loadGameFromState(nextState);
-        } else {
-            console.log('No state to redo.');
+            this.events.emit('updateUI', nextState); // Update UI
         }
     }
 

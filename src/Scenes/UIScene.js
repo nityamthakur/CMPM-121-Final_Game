@@ -77,46 +77,28 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.reapPlant());
 
-        // Undo/Redo buttons
+        // Undo button
         const undoButton = this.add.text(820, 420, 'Undo', {
             fontSize: '18px',
             fill: '#fff',
-            backgroundColor: '#000080',
+            backgroundColor: '#555',
             padding: { left: 10, right: 10, top: 5, bottom: 5 }
         })
             .setInteractive()
             .on('pointerdown', () => this.undoAction());
 
+        // Redo button
         const redoButton = this.add.text(820, 460, 'Redo', {
             fontSize: '18px',
             fill: '#fff',
-            backgroundColor: '#008000',
+            backgroundColor: '#555',
             padding: { left: 10, right: 10, top: 5, bottom: 5 }
         })
             .setInteractive()
             .on('pointerdown', () => this.redoAction());
 
-        // Save and Load buttons
-        const saveButton = this.add.text(820, 500, 'Save Game', {
-            fontSize: '18px',
-            fill: '#fff',
-            backgroundColor: '#483D8B',
-            padding: { left: 10, right: 10, top: 5, bottom: 5 }
-        })
-            .setInteractive()
-            .on('pointerdown', () => this.saveGame());
-
-        const loadButton = this.add.text(820, 540, 'Load Game', {
-            fontSize: '18px',
-            fill: '#fff',
-            backgroundColor: '#2F4F4F',
-            padding: { left: 10, right: 10, top: 5, bottom: 5 }
-        })
-            .setInteractive()
-            .on('pointerdown', () => this.loadGame());
-
         // Instructions button
-        const instructionsButton = this.add.text(820, 580, 'Instructions', {
+        const instructionsButton = this.add.text(820, 500, 'Instructions', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#555',
@@ -127,7 +109,7 @@ class UIScene extends Phaser.Scene {
 
         this.instructionText = this.add.text(
             820,
-            620,
+            550,
             '',
             { fontSize: '16px', fill: '#fff', wordWrap: { width: 180 } }
         ).setVisible(false);
@@ -143,6 +125,10 @@ class UIScene extends Phaser.Scene {
 
         this.scene.get('GameScene').events.on('updateCurrency', (currency) => {
             this.updateCurrency(currency);
+        });
+
+        this.scene.get('GameScene').events.on('updateUI', (state) => {
+            this.updateUI(state);
         });
     }
 
@@ -162,20 +148,6 @@ class UIScene extends Phaser.Scene {
         this.scene.get('GameScene').events.emit('redo');
     }
 
-    saveGame() {
-        const slot = prompt('Enter save slot name:');
-        if (slot) {
-            this.scene.get('GameScene').events.emit('saveGame', slot);
-        }
-    }
-
-    loadGame() {
-        const slot = prompt('Enter save slot name to load:');
-        if (slot) {
-            this.scene.get('GameScene').events.emit('loadGame', slot);
-        }
-    }
-
     updateTurn(turn) {
         this.turnCount = turn;
         this.turnText.setText(`Turn: ${turn}`);
@@ -188,6 +160,12 @@ class UIScene extends Phaser.Scene {
     updateCurrency(currency) {
         this.currency = currency;
         this.currencyText.setText(`Currency: $${currency}`);
+    }
+
+    updateUI(state) {
+        this.updateTurn(state.turnCount);
+        this.updateProduce(state.produceWeight);
+        this.updateCurrency(state.currency);
     }
 
     showInstructions() {
@@ -208,4 +186,3 @@ class UIScene extends Phaser.Scene {
         }
     }
 }
-
