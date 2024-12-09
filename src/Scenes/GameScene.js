@@ -154,12 +154,16 @@ class GameScene extends Phaser.Scene {
     saveGame(slot) {
         const gameState = this.getCurrentGameState();
         this.saveSystem.saveToSlot(slot, gameState);
+        console.log(`Game saved to slot: ${slot}`, gameState);
     }
-
+    
     loadGame(slot) {
         const gameState = this.saveSystem.loadFromSlot(slot);
         if (gameState) {
+            console.log(`Game loaded from slot: ${slot}`, gameState);
             this.loadGameFromState(gameState);
+        } else {
+            console.log(`No saved game found in slot: ${slot}`);
         }
     }
 
@@ -171,19 +175,26 @@ class GameScene extends Phaser.Scene {
     undoAction() {
         const previousState = this.historyManager.undo();
         if (previousState) {
+            console.log('Undo successful. Restoring state:', previousState);
             this.loadGameFromState(previousState);
+        } else {
+            console.log('No state to undo.');
         }
     }
-
+    
     redoAction() {
         const nextState = this.historyManager.redo();
         if (nextState) {
+            console.log('Redo successful. Restoring state:', nextState);
             this.loadGameFromState(nextState);
+        } else {
+            console.log('No state to redo.');
         }
     }
 
     pushGameStateToHistory() {
         const gameState = this.getCurrentGameState();
+        console.log('Pushing game state to history:', gameState);
         this.historyManager.pushState(gameState);
     }
 
@@ -208,17 +219,37 @@ class GameScene extends Phaser.Scene {
             player: { x: this.player.position.x, y: this.player.position.y },
             currency: this.currency,
             produceWeight: this.produceWeight,
-            turnCount: this.turnCount
+            turnCount: this.turnCount,
+            plants: this.plants.map((plant) => ({
+                type: plant.type,
+                position: plant.position,
+                growth: plant.growth
+            })),
         };
     }
 
     loadGameFromState(state) {
         this.grid.deserialize(state.grid);
         this.player.position = state.player;
+        this.player.sprite.setPosition(
+            state.player.x * this.cellSize + this.cellSize / 2,
+            state.player.y * this.cellSize + this.cellSize / 2
+        );
         this.currency = state.currency;
         this.produceWeight = state.produceWeight;
         this.turnCount = state.turnCount;
-        console.log('Game state loaded.');
+    
+        // Clear existing plants and re-add from saved state
+        this.plants.forEach((plant) => plant.sprite.destroy());
+        this.plants = [];
+        state.plants.forEach((plantData) => {
+            const plant = new Plant(this, plantData.position.x, plantData.position.y, plantData.type);
+            plant.growth = plantData.growth; // Restore growth stage
+            plant.updateSprite(); // Update texture based on growth stage
+            this.plants.push(plant);
+        });
+    
+        console.log('Game state fully restored:', state);
     }
 
     update() {
