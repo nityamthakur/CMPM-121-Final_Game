@@ -176,7 +176,11 @@ class GameScene extends Phaser.Scene {
         const previousState = this.historyManager.undo();
         if (previousState) {
             this.loadGameFromState(previousState);
-            this.events.emit('updateUI', previousState); // Update UI
+            
+            // Emit events to update the UI
+            this.events.emit('updateTurn', this.turnCount);
+            this.events.emit('updateCurrency', this.currency);
+            this.events.emit('updateProduce', this.produceWeight);
         }
     }
     
@@ -184,7 +188,11 @@ class GameScene extends Phaser.Scene {
         const nextState = this.historyManager.redo();
         if (nextState) {
             this.loadGameFromState(nextState);
-            this.events.emit('updateUI', nextState); // Update UI
+            
+            // Emit events to update the UI
+            this.events.emit('updateTurn', this.turnCount);
+            this.events.emit('updateCurrency', this.currency);
+            this.events.emit('updateProduce', this.produceWeight);
         }
     }
 
