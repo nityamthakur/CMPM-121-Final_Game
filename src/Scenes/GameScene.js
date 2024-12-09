@@ -184,7 +184,7 @@ class GameScene extends Phaser.Scene {
         const previousState = this.historyManager.undo();
         if (previousState) {
             this.loadGameFromState(previousState);
-            this.events.emit('updateUI', previousState);
+            this.events.emit('updateUI', previousState); // Update UI
         }
     }
 
@@ -192,7 +192,7 @@ class GameScene extends Phaser.Scene {
         const nextState = this.historyManager.redo();
         if (nextState) {
             this.loadGameFromState(nextState);
-            this.events.emit('updateUI', nextState);
+            this.events.emit('updateUI', nextState); // Update UI
         }
     }
 
