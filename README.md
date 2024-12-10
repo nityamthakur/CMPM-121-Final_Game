@@ -188,6 +188,8 @@ F2 introduced new challenges that required me to rethink how the game’s logic 
 
 Moving forward, I aim to refine the game further by improving feedback mechanisms and addressing any remaining bugs. The next milestone will focus on enhancing player feedback through improved UI/UX and possibly revisiting the alternate platform implementation.
 
+Note: Please find the F2 video here: https://drive.google.com/drive/folders/1qzUa_PQLYlBxoCLmyRKfQweWgxesjTtK?usp=sharing
+
 ## Devlog Entry for F3
 
 ### How We Satisfied the Software Requirements
@@ -241,3 +243,7 @@ F3 highlighted the importance of designing for accessibility and usability:
 3. **Scope Management**: Completing F3 within the given timeframe required careful prioritization. For example, instead of building a new language selection UI from scratch, I opted for a functional dropdown menu that integrated seamlessly with existing code.
 
 This milestone reinforced my confidence in adapting games for different platforms and audiences. Moving forward, I aim to refine the game's accessibility features and explore additional platform support.
+
+
+Note: Please find the F3 video here: https://drive.google.com/drive/folders/1qzUa_PQLYlBxoCLmyRKfQweWgxesjTtK?usp=sharing
+
