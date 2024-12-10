@@ -184,6 +184,58 @@ F2 introduced new challenges that required me to rethink how the game’s logic 
 
 Moving forward, I aim to refine the game further by improving feedback mechanisms and addressing any remaining bugs. The next milestone will focus on enhancing player feedback through improved UI/UX and possibly revisiting the alternate platform implementation.
 
+ 
 
+## Devlog Entry for F3
 
+### How We Satisfied the Software Requirements
 
+#### F0+F1+F2
+
+The previous F0, F1, and F2 requirements remain satisfied in the latest version of the software. Minor adjustments were made to integrate internationalization and localization without impacting existing functionality. Additionally, the undo/redo functionality was refined to ensure the UI updates correctly after state changes.
+
+#### Internationalization
+
+To support internationalization, all user-facing strings were decoupled from the core logic and moved into a centralized language object. The `t` function dynamically retrieves localized text for any key. This design ensures all text visible to the player is easily replaceable, making it simple to add new languages or modify existing translations.
+
+Adding a new translatable string requires:
+1. Adding the new string to the `languages` object in `BootScene.js` for all supported languages.
+2. Updating any `t('key')` references in the code to use the new key.
+
+This approach eliminates hard-coded text and enforces consistency across the game.
+
+#### Localization
+
+The game now supports three languages: English (`en`), Simplified Chinese (`zh`), and Arabic (`ar`). Here's how localization was achieved:
+
+- **English (Default)**: The English localization served as the base language and was written directly into the language object.
+- **Simplified Chinese**: Translations were generated using a combination of personal knowledge and assistance from language tools like ChatGPT.
+- **Arabic**: ChatGPT assisted in providing Arabic translations. Challenges like right-to-left (RTL) text alignment were resolved using Phaser's `setRTL()` feature.
+
+Players can select their preferred language from a dropdown menu in the main menu. This setting dynamically updates the game’s text without restarting. By default, the game starts in English, but the selected language persists between sessions.
+
+#### Mobile Installation
+
+The game was made installable on smartphones as a Progressive Web App (PWA). Following [this tutorial](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Tutorials/js13kGames/Installable_PWAs), the following steps were completed:
+
+1. **Web Manifest**: A `game.webmanifest` file was created, specifying metadata such as app name, description, start URL, and an app icon. The app icon was sourced from a public URL and added to the manifest.
+2. **Service Worker**: A service worker was implemented to cache game assets, enabling offline play. This ensured the game remained functional without an internet connection after the initial installation.
+
+Once configured, the game was tested and successfully installed on an Android device using Chrome. The PWA could be launched from the home screen and provided a seamless full-screen experience.
+
+#### Mobile Play (Offline)
+
+To ensure smooth gameplay on mobile devices, the following changes were made:
+- **Scaling**: Adjusted UI elements and text to accommodate smaller screen sizes.
+- **Offline Support**: Added a service worker to cache assets, ensuring all necessary files were available for offline play. Testing confirmed that the game worked without any issues in airplane mode.
+
+No significant changes were needed for game logic, as Phaser's responsive design and lightweight assets translated well to mobile platforms.
+
+### Reflection
+
+F3 highlighted the importance of designing for accessibility and usability:
+1. **Internationalization**: This requirement emphasized the value of separating presentation from logic. It also reinforced the importance of planning for scalability—adding a fourth language would now require minimal effort.
+2. **Mobile Play**: Creating a PWA showcased the benefits of web-based game development. By leveraging existing browser features, the game became accessible on a wider range of devices with minimal additional development.
+3. **Scope Management**: Completing F3 within the given timeframe required careful prioritization. For example, instead of building a new language selection UI from scratch, I opted for a functional dropdown menu that integrated seamlessly with existing code.
+
+This milestone reinforced my confidence in adapting games for different platforms and audiences. Moving forward, I aim to refine the game's accessibility features and explore additional platform support.
