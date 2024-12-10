@@ -4,43 +4,48 @@ class UIScene extends Phaser.Scene {
     }
 
     create() {
+        // Adjust the starting position of the UI to move it more in-bounds
+        const uiX = 620; // Adjusted x-coordinate for UI
+        const uiY = 10; // Starting y-coordinate for UI
+        const spacing = 30; // Spacing between elements
+
         // Currency display
         this.currency = 20; // Initial currency
-        this.currencyText = this.add.text(820, 10, `Currency: $${this.currency}`, {
+        this.currencyText = this.add.text(uiX, uiY, `Currency: $${this.currency}`, {
             fontSize: '20px',
             fill: '#fff'
         });
 
         // Turn counter
         this.turnCount = 0;
-        this.turnText = this.add.text(820, 40, `Turn: ${this.turnCount}`, {
+        this.turnText = this.add.text(uiX, uiY + spacing, `Turn: ${this.turnCount}`, {
             fontSize: '20px',
             fill: '#fff'
         });
 
         // Produce display and goal
-        this.produceText = this.add.text(820, 70, `Produce: 0g`, {
+        this.produceText = this.add.text(uiX, uiY + spacing * 2, `Produce: 0g`, {
             fontSize: '20px',
             fill: '#fff'
         });
-        this.goalText = this.add.text(820, 100, `Goal: 50g`, {
+        this.goalText = this.add.text(uiX, uiY + spacing * 3, `Goal: 50g`, {
             fontSize: '20px',
             fill: '#fff'
         });
 
         // Plant explanations
-        this.add.text(820, 140, 'Plants:', { fontSize: '24px', fill: '#fff' });
+        this.add.text(uiX, uiY + spacing * 5, 'Plants:', { fontSize: '24px', fill: '#fff' });
         this.add.text(
-            820,
-            170,
+            uiX,
+            uiY + spacing * 6,
             'Cabbage: $5, +10g\nCarrot: $3, +5g\nCorn: $7, +15g',
             { fontSize: '16px', fill: '#fff' }
         );
 
         // Sow buttons
-        this.add.text(820, 230, 'Sow Plants:', { fontSize: '20px', fill: '#fff' });
+        this.add.text(uiX, uiY + spacing * 8, 'Sow Plants:', { fontSize: '20px', fill: '#fff' });
 
-        const sowCabbageButton = this.add.text(820, 260, 'Sow Cabbage', {
+        const sowCabbageButton = this.add.text(uiX, uiY + spacing * 9, 'Sow Cabbage', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#228B22',
@@ -49,7 +54,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.sowPlant('cabbage'));
 
-        const sowCarrotButton = this.add.text(820, 300, 'Sow Carrot', {
+        const sowCarrotButton = this.add.text(uiX, uiY + spacing * 10, 'Sow Carrot', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#FF8C00',
@@ -58,7 +63,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.sowPlant('carrot'));
 
-        const sowCornButton = this.add.text(820, 340, 'Sow Corn', {
+        const sowCornButton = this.add.text(uiX, uiY + spacing * 11, 'Sow Corn', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#FFD700',
@@ -68,7 +73,7 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.sowPlant('corn'));
 
         // Reap button
-        const reapButton = this.add.text(820, 380, 'Reap Plant', {
+        const reapButton = this.add.text(uiX, uiY + spacing * 12, 'Reap Plant', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#8B0000',
@@ -78,7 +83,7 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.reapPlant());
 
         // Undo/Redo buttons
-        const undoButton = this.add.text(820, 420, 'Undo', {
+        const undoButton = this.add.text(uiX, uiY + spacing * 13, 'Undo', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#000080',
@@ -87,7 +92,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.undoAction());
 
-        const redoButton = this.add.text(820, 460, 'Redo', {
+        const redoButton = this.add.text(uiX, uiY + spacing * 14, 'Redo', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#008000',
@@ -97,7 +102,7 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.redoAction());
 
         // Save and Load buttons
-        const saveButton = this.add.text(820, 500, 'Save Game', {
+        const saveButton = this.add.text(uiX, uiY + spacing * 15, 'Save Game', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#483D8B',
@@ -106,7 +111,7 @@ class UIScene extends Phaser.Scene {
             .setInteractive()
             .on('pointerdown', () => this.saveGame());
 
-        const loadButton = this.add.text(820, 540, 'Load Game', {
+        const loadButton = this.add.text(uiX, uiY + spacing * 16, 'Load Game', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#2F4F4F',
@@ -116,7 +121,7 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.loadGame());
 
         // Instructions button
-        const instructionsButton = this.add.text(820, 580, 'Instructions', {
+        const instructionsButton = this.add.text(uiX, uiY + spacing * 17, 'Instructions', {
             fontSize: '18px',
             fill: '#fff',
             backgroundColor: '#555',
@@ -126,8 +131,8 @@ class UIScene extends Phaser.Scene {
             .on('pointerdown', () => this.showInstructions());
 
         this.instructionText = this.add.text(
-            820,
-            620,
+            uiX,
+            uiY + spacing * 18,
             '',
             { fontSize: '16px', fill: '#fff', wordWrap: { width: 180 } }
         ).setVisible(false);
@@ -145,6 +150,7 @@ class UIScene extends Phaser.Scene {
             this.updateCurrency(currency);
         });
     }
+
 
     sowPlant(type) {
         this.scene.get('GameScene').events.emit('sowPlant', type);
