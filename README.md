@@ -111,6 +111,83 @@ columns 1
 
 These adjustments highlight the evolution of our game design and the importance of user feedback.
 
+
+## Devlog Entry for F2
+
+### How We Satisfied the Software Requirements
+
+#### F0+F1
+
+The previous F0 and F1 requirements remain satisfied in the latest version of our software. Minor refinements were made to improve code quality and user experience:
+- The plant rendering system was revised to fix layering issues and ensure plants appeared properly above the grid.
+- Refactored `PlantManager` and integrated the `PlantDefinitionLanguage` for cleaner and more maintainable code.
+
+#### External DSL for Scenario Design
+
+We implemented an external DSL for defining gameplay scenarios. Our DSL is based on YAML, which is a well-known data language for configuration. This design allows scenario designers to define starting conditions, randomization policies, unique events, and victory conditions without modifying the game's core logic.
+
+Example scenario in YAML:
+
+```yaml
+tutorial:
+  grid_size: [5, 5]
+  available_plants: ["cabbage"]
+  win_conditions:
+    - ["cabbage", "min", 3]
+  special_events: []
+  human_instructions: "Plant and grow at least 3 cabbages to win."
+```
+
+Explanation:
+	•	grid_size: Defines the size of the game grid (5x5).
+	•	available_plants: Specifies the plants available to the player in this scenario (weed only in this case).
+	•	win_conditions: Describes the victory condition. Here, the player must grow at least 5 weeds to win.
+	•	special_events: Schedules unique events (none in this scenario).
+	•	human_instructions: Provides instructions to the player in natural language.
+
+By storing scenarios in a JSON format, designers can easily edit them without touching the game code. The scenarios are loaded at runtime and parsed into usable data structures.
+
+Internal DSL for Plants and Growth Conditions
+
+The internal DSL for defining plant types and growth conditions was implemented using JavaScript. It allows for expressive, readable definitions of plant types and their unique growth rules. Here’s an example:
+
+```yaml
+PlantDefinitions.definePlant(($) => {
+    $.name("corn")
+        .costToPlant(7)
+        .produce(15)
+        .growsWhen(({ sun, water, neighbors }) => {
+            const cornNeighbors = neighbors.filter((n) => n.type === "corn").length;
+            return sun >= 3 && water >= 2 && cornNeighbors >= 1;
+        });
+});
+```
+
+
+
+Explanation:
+	•	name: Sets the plant type name (corn in this case).
+	•	costToPlant: Specifies the cost to plant it (7 currency).
+	•	produce: Determines the produce value upon reaping (15).
+	•	growsWhen: Defines the conditions under which the plant grows. In this case, corn requires at least 3 units of sun, 2 units of water, and at least 1 neighboring corn plant to grow.
+
+The DSL leverages JavaScript’s expressive capabilities to define arbitrary growth rules using native language constructs (e.g., closures). This makes it easier to add structurally different plant types, such as plants that grow based on moisture levels or neighboring species.
+
+Switch to Alternate Platform
+
+Due to time constraints, I was unable to port the project to an alternate platform as planned. My original goal was to explore Three.js as the alternate platform, rendering the game in 3D while keeping the core logic intact. However, the complexity of implementing F2’s external and internal DSLs required more development time than anticipated. As a result, this requirement remains unmet.
+
+If I were to revisit this, I would port the grid-based gameplay and plant growth logic to Three.js using simple 3D cubes for the grid and models for plants. Most of the game logic (e.g., grid management, plant growth) could be reused with minimal changes, but the rendering and input systems would need to be restructured for a 3D environment.
+
+Reflection
+
+F2 introduced new challenges that required me to rethink how the game’s logic was structured:
+	1.	Scenario Management: Implementing the external DSL showed me the value of separating data-driven design from the main game logic. This separation made it easier to add new scenarios dynamically.
+	2.	Extensibility Through DSLs: Creating an internal DSL for plants highlighted the power of encapsulating domain-specific logic in reusable constructs. It also demonstrated the importance of expressive APIs for future-proofing game features.
+	3.	Time Constraints: Despite planning to explore an alternate platform, I realized the need to prioritize F2’s core requirements over additional experimentation. This reinforced the importance of scope management in solo projects.
+
+Moving forward, I aim to refine the game further by improving feedback mechanisms and addressing any remaining bugs. The next milestone will focus on enhancing player feedback through improved UI/UX and possibly revisiting the alternate platform implementation.
+
 ## Devlog Entry for F3
 
 ### How We Satisfied the Software Requirements
