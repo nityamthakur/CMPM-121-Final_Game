@@ -4,47 +4,60 @@ class MainMenuScene extends Phaser.Scene {
         this.saveSystem = new SaveSystem();
     }
 
+    preload() {
+        // Preload assets for the main menu
+        this.load.audio("background", "./assets/background.mp3"); // Background music
+        this.load.image("backgroundImage", "./assets/farm_background.png"); // Farm-themed background image
+    }
+
     create() {
-        // Display title
-        this.add.text(400, 100, this.getText("main_menu.title"), {
-            fontSize: "32px",
-            fill: "#fff",
+        // Add background image
+        this.add.image(400, 300, "backgroundImage").setDisplaySize(800, 600);
+
+        // Add title with a nicer font
+        const title = this.add.text(400, 100, "Harvest Quest", {
+            fontFamily: "Georgia, serif",
+            fontSize: "64px",
+            fill: "#FFD700",
+            stroke: "#8B4513",
+            strokeThickness: 6,
         }).setOrigin(0.5);
 
-        // Add "Start New Game" button
-        const startButton = this.add.text(400, 200, this.getText("main_menu.start_new_game"), {
+        // Play background music
+        this.backgroundMusic = this.sound.add("background", { loop: true });
+        this.backgroundMusic.play();
+
+        // Add buttons with a farm-themed design
+        const buttonStyle = {
+            fontFamily: "Verdana, sans-serif",
             fontSize: "24px",
             fill: "#fff",
-        })
+            backgroundColor: "#8B4513",
+            padding: { left: 10, right: 10, top: 5, bottom: 5 },
+        };
+
+        // Start New Game button
+        const startButton = this.add.text(400, 200, this.getText("main_menu.start_new_game"), buttonStyle)
             .setInteractive()
             .setOrigin(0.5);
         startButton.on("pointerdown", () => this.startNewGame());
 
-        // Add "Load Game" button
-        const loadButton = this.add.text(400, 250, this.getText("main_menu.load_game"), {
-            fontSize: "24px",
-            fill: "#fff",
-        })
+        // Load Game button
+        const loadButton = this.add.text(400, 250, this.getText("main_menu.load_game"), buttonStyle)
             .setInteractive()
             .setOrigin(0.5);
         loadButton.on("pointerdown", () => this.loadGameMenu());
 
-        // Add "Resume Auto-Save" button (only if an auto-save exists)
+        // Resume Auto-Save button
         if (this.saveSystem.hasAutoSave()) {
-            const resumeButton = this.add.text(400, 300, this.getText("main_menu.resume_auto_save"), {
-                fontSize: "24px",
-                fill: "#fff",
-            })
+            const resumeButton = this.add.text(400, 300, this.getText("main_menu.resume_auto_save"), buttonStyle)
                 .setInteractive()
                 .setOrigin(0.5);
             resumeButton.on("pointerdown", () => this.resumeAutoSave());
         }
 
-        // Add "Instructions" button
-        const instructionsButton = this.add.text(400, 350, this.getText("main_menu.instructions"), {
-            fontSize: "24px",
-            fill: "#fff",
-        })
+        // Instructions button
+        const instructionsButton = this.add.text(400, 350, this.getText("main_menu.instructions"), buttonStyle)
             .setInteractive()
             .setOrigin(0.5);
         instructionsButton.on("pointerdown", () => this.showInstructions());
@@ -54,34 +67,36 @@ class MainMenuScene extends Phaser.Scene {
             fontSize: "20px",
             fill: "#fff",
             align: "center",
+            wordWrap: { width: 500 },
         }).setOrigin(0.5);
         this.instructionText.visible = false;
 
-        // Add language selection dropdown
-        this.add.text(400, 400, this.getText("main_menu.select_language"), {
+        // Add language selection on the right side
+        const languageTitle = this.add.text(650, 200, this.getText("main_menu.select_language"), {
+            fontFamily: "Verdana, sans-serif",
             fontSize: "20px",
             fill: "#fff",
         }).setOrigin(0.5);
 
-        const languages = ["en", "zh", "ar"]; // Supported languages
+        const languages = ["en", "zh", "ar"];
         languages.forEach((lang, index) => {
-            const langButton = this.add.text(400, 430 + index * 30, lang.toUpperCase(), {
+            const langButton = this.add.text(650, 230 + index * 30, lang.toUpperCase(), {
+                fontFamily: "Verdana, sans-serif",
                 fontSize: "20px",
-                fill: "#fff",
-            })
-                .setInteractive()
-                .setOrigin(0.5);
+                fill: "#FFD700",
+                backgroundColor: "#8B4513",
+                padding: { left: 10, right: 10, top: 5, bottom: 5 },
+            }).setInteractive().setOrigin(0.5);
 
             langButton.on("pointerdown", () => {
                 this.registry.set("currentLanguage", lang);
-                this.scene.restart(); // Restart scene to apply new language
+                this.scene.restart();
             });
         });
     }
 
     startNewGame() {
-        const saveSystem = new SaveSystem();
-        saveSystem.deleteSave("auto"); // Clear auto-save data
+        this.saveSystem.deleteSave("auto");
         this.scene.start("GameScene", { newGame: true });
     }
 
@@ -119,10 +134,13 @@ class MainMenuScene extends Phaser.Scene {
         }
     }
 
-    // Helper function to fetch localized text
     getText(key) {
         const currentLanguage = this.registry.get("currentLanguage") || "en";
         const languages = this.registry.get("languages");
         return languages[currentLanguage][key] || key;
+    }
+
+    shutdown() {
+        if (this.backgroundMusic) this.backgroundMusic.stop();
     }
 }
